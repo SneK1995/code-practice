@@ -13,7 +13,11 @@ public class MonotonicStackQueue {
 //		System.out.println(sumSubarrayMins(new int[] {92,80,9,62,49}));
 //		System.out.println(largestRectangleArea(new int[] {2,1,5,6,2,3}));
 //		System.out.println(largestRectangleArea(new int[] {2,4}));
-		System.out.println(largestRectangleArea(new int[] {1,2,3,4,5}));
+//		System.out.println(largestRectangleArea(new int[] {1,2,3,4,5}));
+		MonotonicStackQueue obj=new MonotonicStackQueue();
+		System.out.println(obj.removeKdigits("112", 1));
+		System.out.println(obj.removeKdigits("1432219", 3));
+		System.out.println(obj.removeKdigits("100", 1));
 	}
 	
 	//using stack -> O(n)
@@ -199,5 +203,40 @@ public class MonotonicStackQueue {
         	
         }
         return max;
-	}	
+	}
+	
+	//monotonic stack => time complexity -> O(n)
+	public String removeKdigits(String num, int k) {
+		if(num.length()<=k) {
+            return "0";
+        }
+        ArrayDeque<Character> stack=new ArrayDeque<>();
+        stack.addLast(num.charAt(0));
+        int deleted=k;
+        for(int i=1;i<num.length();i++) {
+            int cur=num.charAt(i)-'0';
+            while(!stack.isEmpty() && deleted>0 && (stack.peekLast()-'0')>cur) {
+                stack.removeLast();
+                deleted--;
+            }
+            stack.addLast(num.charAt(i));
+        }
+        //removing ending greater elements if k digits are still not removed
+        while(!stack.isEmpty() && deleted>0) {
+        	stack.removeLast();
+        	deleted--;
+        }
+        //removing starting 0s
+        while(!stack.isEmpty() && stack.peekFirst()=='0') {
+        	stack.removeFirst();
+        }
+        if(stack.isEmpty()) {
+            return "0";
+        }
+        StringBuilder res=new StringBuilder();
+        while(!stack.isEmpty()) {
+            res.append(stack.removeFirst());
+        }
+        return res.toString();
+    }
 }
