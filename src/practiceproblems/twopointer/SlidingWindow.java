@@ -15,7 +15,12 @@ public class SlidingWindow {
 		//System.out.println(lengthOfLongestNonRepeatSubstring("abcad"));
 //		System.out.println(minWindow("ADOBECODEBANC", "ABC"));
 //		System.out.println(kDistinctChars(3, "abcddefg"));
-		System.out.println(longestOnes(List.of(0,0,1,1), 1));
+//		System.out.println(longestOnes(List.of(0,0,1,1), 1));
+//		System.out.println(totalFruit(new int[] {0,1,1,4,3}));
+		System.out.println(numSubarraysWithSum(new int[] {1,0,1,0,1}, 2));
+		System.out.println(numSubarraysWithSum(new int[] {0,1,1,1,1}, 3));
+		System.out.println(numSubarraysWithSum(new int[] {0,0,0,0,0}, 0));
+		System.out.println(numSubarraysWithSum(new int[] {1,1,1,1,1}, 5));
 	}
 
 	//time-> O(n)
@@ -190,11 +195,27 @@ public class SlidingWindow {
     }
 	
 	public static int totalFruit(int[] fruits) {
-        int l=0;
-        int i=0,j=0,n=fruits.length,k=0;
-        while(j<n) {
-        	
+        int i=0,j=0,nf=0;
+        HashMap<Integer, Integer> basket=new HashMap<>();
+        while(j<fruits.length) {
+        	basket.put(fruits[j],basket.getOrDefault(fruits[j],0)+1);
+        	if(basket.entrySet().size()>2) {
+        		nf=Math.max(nf,j-i);
+        		while(basket.get(fruits[i])>1) {
+        			basket.put(fruits[i],basket.get(fruits[i])-1);
+        			i++;
+        		}
+        		basket.remove(fruits[i]);
+        		i++;
+        	}
+        	j++;
         }
-        return 0;
+        return Math.max(nf,j-i);
+    }
+	
+	public static int numSubarraysWithSum(int[] nums, int goal) {
+        int sg=0,n=0;
+        int i=0,j=0;
+        return n;
     }
 }
