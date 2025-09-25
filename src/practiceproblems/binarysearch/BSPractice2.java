@@ -3,6 +3,14 @@ package practiceproblems.binarysearch;
 import java.util.Arrays;
 
 public class BSPractice2 {
+	
+	public static void main(String[] args) {
+		BSPractice2 ans=new BSPractice2();
+		// System.out.println(ans.minEatingSpeed(new int[]{30,11,23,4,20},5));
+		// System.out.println(ans.minEatingSpeed(new int[]{3,6,7,11},8));
+		// System.out.println(ans.shipWithinDays(new int[]{1,2,3,1,1},4));
+		System.out.println(ans.splitArray(new int[]{1,4,4},3));
+	}
 
 	//Binary search on ans space
 	public int minCapability(int[] nums, int k) {
@@ -78,5 +86,100 @@ public class BSPractice2 {
 		}
 		dp[i][stolen]=0;
 		return false;
+	}
+	
+	public int minEatingSpeed(int[] piles, int h) {
+		int min=1;
+		int max=Arrays.stream(piles).max().getAsInt();
+		int ans=max;
+		while(min<=max) {
+			int mid=(max+min)/2;
+			if(isEatingPossible(piles,h,mid)) {
+				ans=mid;
+				max=mid-1;
+			} else {
+				min=mid+1;
+			}
+		}
+        return ans;
+    }
+	private boolean isEatingPossible(int[] piles, int h, int k) {
+		int n=piles.length;
+		int remainH=h;
+		for(int i=0;i<n;i++) {
+			int reduce=1;
+			if(piles[i]%k==0) {
+				reduce=(piles[i]/k);
+			} else if(piles[i]>k) {
+				reduce=(piles[i]/k)+1;
+			}
+			remainH-=reduce;
+			if(remainH<0) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public int shipWithinDays(int[] weights, int days) {
+		int min=Arrays.stream(weights).max().getAsInt();
+		int max=Arrays.stream(weights).sum();
+		int ans=max;
+		while(min<=max) {
+			int mid=(max+min)/2;
+			if(isShippingPossible(weights,days,mid)) {
+				ans=mid;
+				max=mid-1;
+			} else {
+				min=mid+1;
+			}
+		}
+        return ans;
+    }
+	private boolean isShippingPossible(int[] weights, int days, int w) {
+		int d=1,wsum=0;
+		for(int i=0;i<weights.length;i++) {
+			wsum+=weights[i];
+			if(wsum>w) {
+				d++;
+				if(d>days) {
+					return false;
+				}
+				wsum=weights[i];
+			}
+		}
+		return true;
+	}
+
+	public int splitArray(int[] nums, int k) {
+		int min=Arrays.stream(nums).max().getAsInt();
+		int max=Arrays.stream(nums).sum();
+		int ans=max;
+		while(min<=max) {
+			int mid=(max+min)/2;
+			System.out.println(String.format("checking for min:%s max%s mid:%s", min,max,mid));
+			if(isSplitPossible(nums,k,mid)) {
+				ans=mid;
+				max=mid-1;
+			} else {
+				min=mid+1;
+			}
+			System.out.println("ans: "+ans);
+		}
+        return ans;
+    }
+	private boolean isSplitPossible(int[] nums, int k, int lsum) {
+		int sum=0,sub=1;
+		for(int i=0;i<nums.length;i++) {
+			sum+=nums[i];
+			if(sum>lsum) {
+				sum=nums[i];
+				sub++;
+				if(sub>k) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

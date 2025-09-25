@@ -1,5 +1,6 @@
 package practiceproblems.greedy;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 
 public class GreedyPractice {
@@ -68,4 +69,20 @@ public class GreedyPractice {
 		}
 		return 2;
 	}
+
+	public boolean checkValidString(String s) {
+        ArrayDeque<Character> stack=new ArrayDeque<>();
+        int a=0;
+        for(char c:s.toCharArray()) {
+        	if(c=='(' || c=='*') {
+        		stack.push(c);
+        	
+        	} else {
+        		if(!stack.isEmpty() && stack.peek()=='(' || stack.peek()=='*') {
+        			stack.pop();
+        		}
+        	}
+        }
+        return stack.isEmpty() || a>0;
+    }
 }

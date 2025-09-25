@@ -17,10 +17,10 @@ public class SlidingWindow {
 //		System.out.println(kDistinctChars(3, "abcddefg"));
 //		System.out.println(longestOnes(List.of(0,0,1,1), 1));
 //		System.out.println(totalFruit(new int[] {0,1,1,4,3}));
-		System.out.println(numSubarraysWithSum(new int[] {1,0,1,0,1}, 2));
-		System.out.println(numSubarraysWithSum(new int[] {0,1,1,1,1}, 3));
-		System.out.println(numSubarraysWithSum(new int[] {0,0,0,0,0}, 0));
-		System.out.println(numSubarraysWithSum(new int[] {1,1,1,1,1}, 5));
+//		System.out.println(numSubarraysWithSum(new int[] {1,0,1,0,1}, 2));
+		SlidingWindow ans=new SlidingWindow();
+//		System.out.println(ans.numberOfSubarrays(new int[] {2,2,2,1,2,2,1,2,2,2}, 2));
+		System.out.println(longestSubarrayWithSumK(new int[] {1, 2, 3, 1, 1, 1, 1},3));
 	}
 
 	//time-> O(n)
@@ -175,6 +175,34 @@ public class SlidingWindow {
 		return max==Integer.MIN_VALUE ? n:max;
 	}
 	
+	//same pattern => atmost(k)-atmost(k-1)=exactly(k) => O(n)
+	//same as above to find atmost(k) distinct chars/integers
+	public int subarraysWithKDistinct(int[] nums, int k) {
+        return subarraysAtmostKDistinct(nums, k)-subarraysAtmostKDistinct(nums, k-1);
+    }
+	public int subarraysAtmostKDistinct(int[] nums, int k) {
+        int n=nums.length;
+        int i=0,j=0,no=0,di=0;
+        int max=Arrays.stream(nums).max().getAsInt();
+        int[] freq=new int[max+1];
+        while(j<n) {
+        	if(freq[nums[j]]==0) {
+        		di++;
+        	}
+        	freq[nums[j]]++;
+        	while(di>k) {
+        		freq[nums[i]]--;
+        		if(freq[nums[i]]==0) {
+        			di--;
+        		}
+        		i++;
+        	}
+        	no+=(j-i+1);
+        	j++;
+        }
+        return no;
+    }
+	
 	public static int longestOnes(List<Integer> list, int k) {
 		int[] nums=list.stream().mapToInt(Integer::intValue).toArray();
         int lmax=Integer.MIN_VALUE;
@@ -213,9 +241,74 @@ public class SlidingWindow {
         return Math.max(nf,j-i);
     }
 	
+	//pattern => atmost(k)-atmost(k-1)=exactly(k) => O(n)
 	public static int numSubarraysWithSum(int[] nums, int goal) {
-        int sg=0,n=0;
-        int i=0,j=0;
-        return n;
+        return numSubArrayAtmostK(nums,goal)-numSubArrayAtmostK(nums,goal-1);
+    }
+	private static int numSubArrayAtmostK(int[] nums, int k) {
+		if(k<0) {
+			return 0;
+		}
+		int n=nums.length;
+		int i=0,j=0,s=0,no=0;
+		while(j<n) {
+			s+=nums[j];
+			if(s<=k) {
+				no+=(j-i+1);
+			} else {
+				while(s>k) {
+					s-=nums[i];
+					i++;
+				}
+				no+=(j-i+1);
+			}
+			j++;
+		}
+		return no;	
+	}
+	
+	//same as above => pattern => atmost(k)-atmost(k-1)=exactly(k) => O(n)
+	public int numberOfSubarrays(int[] nums, int k) {
+        return numberOfAtmostk(nums,k)-numberOfAtmostk(nums,k-1);
+    }
+    private int numberOfAtmostk(int [] nums, int k) {
+        int n=nums.length;
+        int i=0,j=0,s=0,no=0;
+        while(j<n) {
+            if(nums[j]%2!=0) {
+                s++;
+            }
+            if(s<=k) {
+                no+=(j-i+1);
+            } else {
+                while(s>k) {
+                    if(nums[i]%2!=0) {
+                    	s--;
+                    }
+                    i++;
+                }
+                no+=(j-i+1);
+            }
+            j++;
+        }
+        return no;
+    }
+    
+    //same as kDistinctChars -> O(n) (only positive integers)
+    public static int longestSubarrayWithSumK(int[] a, long k) {
+    	int i=0,j=0,max=0,n=a.length;
+    	long s=0;
+    	while(j<n) {
+    		s+=(long)a[j];
+    		while(s>k) {
+    			s-=a[i];
+    			i++;
+    		}
+    		if(s==k) {
+    			max=Math.max(max,j-i+1);
+    		}
+    		j++;
+    	}
+    	return max;
     }
 }
